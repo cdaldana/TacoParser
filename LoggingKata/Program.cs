@@ -24,36 +24,76 @@ namespace LoggingKata
             logger.LogInfo($"Lines: {lines[0]}");
 
             // Create a new instance of your TacoParser class
-            var parser = new TacoParser();
+
 
             // Grab an IEnumerable of locations using the Select command: var locations = lines.Select(parser.Parse);
-            var locations = lines.Select(parser.Parse).ToArray();
+
 
             // DON'T FORGET TO LOG YOUR STEPS
 
             // Now that your Parse method is completed, START BELOW ----------
 
-            // TODO: Create two `ITrackable` variables with initial values of `null`. These will be used to store your two taco bells that are the farthest from each other.
+            // TODO: Create two `ITrackable` variables with initial values of `null`.
+            // These will be used to store your two taco bells that are the farthest from each other.
+            ITrackable locA = null;
+            ITrackable locB = null;
+           
             // Create a `double` variable to store the distance
+            var parser = new TacoParser();
 
-            // Include the Geolocation toolbox, so you can compare locations: `using GeoCoordinatePortable;`
+            var locations = lines.Select(line => parser.Parse(line)).ToArray();
 
-            //HINT NESTED LOOPS SECTION---------------------
-            // Do a loop for your locations to grab each location as the origin (perhaps: `locA`)
+            ITrackable tacoBell1 = new TacoBell();
+            ITrackable tacoBell2 = new TacoBell();
 
-            // Create a new corA Coordinate with your locA's lat and long
+            double distance = 0;
 
-            // Now, do another loop on the locations with the scope of your first loop, so you can grab the "destination" location (perhaps: `locB`)
+            for (int i = 0; i < locations.Length; i++)
+            {
+                var locationOne = locations[i];
+                var corA = new GeoCoordinate();
+                corA.Latitude = locationOne.Location.Latitude;
+                corA.Longitude = locationOne.Location.Longitude;
 
-            // Create a new Coordinate with your locB's lat and long
+                for (int j = 0; j < locations.Length; j++)
+                {
+                    var locationTwo = locations[j];
+                    var corB = new GeoCoordinate(locationTwo.Location.Latitude, locationTwo.Location.Longitude);
 
-            // Now, compare the two using `.GetDistanceTo()`, which returns a double
-            // If the distance is greater than the currently saved distance, update the distance and the two `ITrackable` variables you set above
+                    if (corA.GetDistanceTo(corB) > distance)
+                    {
+                        distance = corA.GetDistanceTo(corB);
+                        tacoBell1 = locA;
+                        tacoBell2 = locB;
+                    }
 
-            // Once you've looped through everything, you've found the two Taco Bells farthest away from each other.
+                }
+
+            }
+
+            logger.LogInfo($"The two farthest apart are {locA.Name} and {locB.Name} at {distance * 0.0000621371} miles apart");
 
 
-            
         }
+        // Include the Geolocation toolbox, so you can compare locations: `using GeoCoordinatePortable;`
+
+        //HINT NESTED LOOPS SECTION---------------------
+        // Do a loop for your locations to grab each location as the origin (perhaps: `locA`)
+
+
+        // Create a new corA Coordinate with your locA's lat and long
+
+        // Now, do another loop on the locations with the scope of your first loop, so you can grab the "destination" location (perhaps: `locB`)
+
+        // Create a new Coordinate with your locB's lat and long
+
+        // Now, compare the two using `.GetDistanceTo()`, which returns a double
+        // If the distance is greater than the currently saved distance, update the distance and the two `ITrackable` variables you set above
+
+        // Once you've looped through everything, you've found the two Taco Bells farthest away from each other.
+
+
+
     }
-}
+    }
+
